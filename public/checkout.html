@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+</head>
+<body>
+    <h1>Checkout</h1>
+    <form id="checkout-form">
+        <label for="address">Shipping Address:</label>
+        <input type="text" id="address" name="address" required />
+        <button type="submit">Checkout</button>
+    </form>
+    <p id="message"></p>
+    <script>
+        document.getElementById('checkout-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const address = document.getElementById('address').value;
+
+            fetch('/cart/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ shippingAddress: address })
+            }).then(response => {
+                if (response.ok) {
+                    document.getElementById('message').innerText = 'Checkout successful! Your cart has been cleared.';
+                } else {
+                    document.getElementById('message').innerText = 'Checkout failed. Please try again.';
+                }
+            }).catch(error => {
+                document.getElementById('message').innerText = 'An error occurred. Please try again.';
+            });
+        });
+    </script>
+</body>
+</html>

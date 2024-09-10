@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+</head>
+<body>
+    <h1>Products</h1>
+    <div id="products-list"></div>
+    <button onclick="window.location.href='/cart.html'">Go to Cart</button>
+    <script>
+        fetch('/products')
+            .then(response => response.json())
+            .then(products => {
+                const productsList = document.getElementById('products-list');
+                products.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.innerHTML = `
+                        <div style="border: 1px solid #ccc; padding: 10px; margin: 10px;">
+                            <img src="${product.image}" alt="${product.title}" style="width: 100px; height: 100px;" />
+                            <h2>${product.title}</h2>
+                            <p>${product.description}</p>
+                            <p>Price: $${product.price}</p>
+                            <button onclick="addToCart(${product.id})">Add to Cart</button>
+                        </div>
+                    `;
+                    productsList.appendChild(productDiv);
+                });
+            });
+
+        function addToCart(productId) {
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId, quantity: 1 })
+            }).then(response => {
+                if (response.ok) {
+                    alert('Product added to cart.');
+                } else {
+                    alert('Failed to add product to cart.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
